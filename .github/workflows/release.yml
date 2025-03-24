@@ -121,8 +121,8 @@ jobs:
           name: build-linux-x86_64-intermediate
           path: release/work/build-linux-x86_64/dist-tar/
 
-  build-linux-arm:
-    runs-on: ubuntu-latest
+  build-linux-aarch64:
+    runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -139,13 +139,13 @@ jobs:
 
       - name: Build ARM 64-bit (AArch64)
         run: |
-          export CROSS_COMPILE=aarch64-linux-gnu-
+          # export CROSS_COMPILE=aarch64-linux-gnu-
           release/build_linux.sh aarch64
 
-      - name: Build ARM 32-bit (ARMv7)
-        run: |
-          export CROSS_COMPILE=arm-linux-gnueabihf-
-          release/build_linux.sh armv7
+      # - name: Build ARM 32-bit (ARMv7)
+      #   run: |
+      #     # export CROSS_COMPILE=arm-linux-gnueabihf-
+      #     release/build_linux.sh armv7
 
       - name: Tar ARM 64-bit
         run: |
@@ -154,12 +154,12 @@ jobs:
           cd dist-tar
           tar -C .. -cvf dist.tar.gz dist/
 
-      - name: Tar ARM 32-bit
-        run: |
-          cd release/work/build-linux-armv7
-          mkdir dist-tar
-          cd dist-tar
-          tar -C .. -cvf dist.tar.gz dist/
+      # - name: Tar ARM 32-bit
+      #   run: |
+      #     cd release/work/build-linux-armv7
+      #     mkdir dist-tar
+      #     cd dist-tar
+      #     tar -C .. -cvf dist.tar.gz dist/
 
       - name: Upload ARM 64-bit artifact
         uses: actions/upload-artifact@v4
@@ -167,11 +167,11 @@ jobs:
           name: build-linux-aarch64
           path: release/work/build-linux-aarch64/dist-tar/
 
-      - name: Upload ARM 32-bit artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-linux-armv7
-          path: release/work/build-linux-armv7/dist-tar/
+      # - name: Upload ARM 32-bit artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: build-linux-armv7
+      #     path: release/work/build-linux-armv7/dist-tar/
 
   build-win32:
     runs-on: ubuntu-latest
@@ -351,7 +351,7 @@ jobs:
   package-linux-arm:
     needs:
       - build-scrcpy-server
-      - build-linux-arm
+      - build-linux-aarch64
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -369,27 +369,27 @@ jobs:
           name: build-linux-aarch64
           path: release/work/build-linux-aarch64/dist-tar/
 
-      - name: Download build-linux-armv7
-        uses: actions/download-artifact@v4
-        with:
-          name: build-linux-armv7
-          path: release/work/build-linux-armv7/dist-tar/
+      # - name: Download build-linux-armv7
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: build-linux-armv7
+      #     path: release/work/build-linux-armv7/dist-tar/
 
       - name: Detar ARM 64-bit
         run: |
             cd release/work/build-linux-aarch64
             tar xf dist-tar/dist.tar.gz
 
-      - name: Detar ARM 32-bit
-        run: |
-            cd release/work/build-linux-armv7
-            tar xf dist-tar/dist.tar.gz
+      # - name: Detar ARM 32-bit
+      #   run: |
+      #       cd release/work/build-linux-armv7
+      #       tar xf dist-tar/dist.tar.gz
 
       - name: Package ARM 64-bit
         run: release/package_client.sh linux-aarch64 tar.gz
 
-      - name: Package ARM 32-bit
-        run: release/package_client.sh linux-armv7 tar.gz
+      # - name: Package ARM 32-bit
+      #   run: release/package_client.sh linux-armv7 tar.gz
 
       - name: Upload ARM 64-bit release
         uses: actions/upload-artifact@v4
@@ -397,11 +397,11 @@ jobs:
           name: release-linux-aarch64
           path: release/output/
 
-      - name: Upload ARM 32-bit release
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-linux-armv7
-          path: release/output/
+      # - name: Upload ARM 32-bit release
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: release-linux-armv7
+      #     path: release/output/
 
   package-win32:
     needs:
@@ -579,11 +579,11 @@ jobs:
           name: release-linux-aarch64
           path: release/output/
 
-      - name: Download release-linux-armv7
-        uses: actions/download-artifact@v4
-        with:
-          name: release-linux-armv7
-          path: release/output/
+      # - name: Download release-linux-armv7
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: release-linux-armv7
+      #     path: release/output/
 
       - name: Download release-win32
         uses: actions/download-artifact@v4
